@@ -12,35 +12,38 @@ package dynamicprogramming;
 public class longestPalindromeSubstring {
     static class Solution {
         public String longestPalindrome(String s) {
-
-            String res="";
-            int resLength=0;
-            int l=0,r=0;
-            int n = s.length();
-
-            for(int i=0;i<n;i++){
-                l=i;
-                r=i;
-                if(s.length()%2==0){
-                    r=i+1;
-                }
-
-                while(l>=0 && r<s.length() && s.charAt(l)==s.charAt(r)){
-                    if((r-l+1)>resLength){
-                        res=s.substring(l,r+1);
-                        resLength = r-l+1;
-                    }
-                    l=l-1;
-                    r=r+1;
-                }
-
+            if (s == null || s.length() == 0) {
+                return "";
             }
-            return res;
 
+            int start = 0;
+            int end = 0;
+
+            for (int i = 0; i < s.length(); i++) {
+                int odd = expandAroundCenter(s, i, i);
+                int even = expandAroundCenter(s, i, i + 1);
+                int max_len = Math.max(odd, even);
+
+                if (max_len > end - start) {
+                    start = i - (max_len - 1) / 2;
+                    end = i + max_len / 2;
+                }
+            }
+
+            return s.substring(start, end + 1);
         }
+
+        private int expandAroundCenter(String s, int left, int right) {
+            while (left >= 0 && right < s.length() && s.charAt(left) == s.charAt(right)) {
+                left--;
+                right++;
+            }
+            return right - left - 1;
+        }
+
     }
 
-    public static void main(String[] args){
+        public static void main(String[] args){
         Solution l = new Solution();
         System.out.println(l.longestPalindrome("babad"));
     }
